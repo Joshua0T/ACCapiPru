@@ -45,7 +45,7 @@ export const getips = async (req,res) => {
     }
 }
 
-export const postid = async (req,res) => {
+export const postip = async (req,res) => {
     try {
         const {direccion_ip,nombre_equipo,estado} = req.body;
         if(!direccion_ip||!nombre_equipo|| typeof estado !== 'boolean'){
@@ -82,6 +82,74 @@ export const postid = async (req,res) => {
         console.error(error);
         res.status(500).json({
             mensaje: 'Error interno del servidor'
+        })
+    }
+}
+
+export const putip = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const {direccion_ip,nombre_equipo,estado} =req.body;
+
+        if(isNaN(id)){
+            return res.status(400).json({
+                mensaje:'el id sebe ser numerico'
+            });
+        }
+
+        const sql = `update ip_autorizada set direccion_ip = ?, nombre_equipo = ?, estado = ?  where id_ip = ? `;
+
+        const [resultado] = await pool.query(sql,[
+            direccion_ip,
+            nombre_equipo,
+            estado,
+            id
+        ]);
+
+        if(resultado.affectedRows === 0){
+            return res.status(404).json({
+                mensaje :" ip no encontrada"
+            });
+        }
+
+        res.status(200).json({
+            mensaje:"usuario actualizado correctamente"
+        })
+    } catch (error) {
+        res.status(500).json({
+            mensaje: "error del servidor",
+            error:error.message
+        })
+    }
+}
+
+
+export const deleteip = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        if(isNaN(id)){
+            return res.status(400).json({
+                mensaje:"el id debe ser numerico"
+            });
+        }
+
+        const sql = `delete from ip_autorizada where id_ip = ?`
+
+        const [resultado] = await pool.query(sql,[id]);
+
+        if(resultado.affectedRows === 0){
+            return res.status(404).json({
+                mensaje:"ip no encontrada"
+            });
+        }
+        res.status(200).json({
+            mensaje:"ip eliminada correctamente"
+        })
+    } catch (error) {
+        res.status(500).json({
+            mensaje: "error del servidor",
+            error:error.message
         })
     }
 }

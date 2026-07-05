@@ -2,7 +2,8 @@ import {pool} from '../db.js'
 
 export const postfinca = async (req,res) => {
     try {
-        const {id_productor,
+        const {
+            id_productor,
             nombre_finca,
             departamento,
             municipio,
@@ -12,7 +13,7 @@ export const postfinca = async (req,res) => {
             area_cultivada,
             descripcion
     } = req.body;
-
+//validar campos obligatorios
     if (!id_productor||
         !nombre_finca||
         !departamento||
@@ -58,9 +59,54 @@ export const postfinca = async (req,res) => {
         id_finca: resultado.insertId
     });
     } catch (error) {
+        console.log(error);
+
        res.status(500).json({
-        mensaje: 'error del servidor'
+        mensaje: 'error del servidor',
+        error: error.message
        }) 
     }
 }
 
+
+export const getfinca = async(req,res) => {
+    try {
+        const {id}=req.params;
+        if (isNaN(id)){
+              return res.status(400).json({
+                mensaje:"el id debe ser numerico"
+            })
+        }
+    
+    const sql = `select id_finca, id_productor,nombre_finca,departamento,municipio,direccion,altitud,area_total,area_cultivada,descripcion,estado_publicacion from finca where id_finca =?`;
+
+    const [resultado] = await pool.query(sql,[id]);
+
+    if(resultado.length === 0){
+        return res.status(400).json({
+            mensaje: "usuario no encontrado"
+        })
+    }
+    res.status(200).json(resultado[0])
+    } catch (error) {
+        res.status(500).json({
+            mensaje:"error del servidor",
+            error:error.message
+        })
+    }
+}
+
+export const getfincas = async(req,res) => {
+    try {
+        const sql = `select id_finca,id_productor,nombre_finca,departamento,municipio,direccion,altitud,area_total,area_cultivada,descripcion,estado_publicacion,fecha_registro from finca`;
+
+        const [resultado] = await pool.query(sql)
+
+        res.status(200).json(resultado)
+    } catch (error) {
+        res.status(500).json({
+            mensaje:"error del servidor",
+            error: error.message
+        })
+    }
+}
