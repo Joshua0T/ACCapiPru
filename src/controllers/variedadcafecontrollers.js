@@ -69,3 +69,18 @@ export const getvariedadcafe = async(req,res) => {
         })
     }
 }
+
+export const getvariedadescafe = async(req,res) => {
+    try {
+        const sql = `select id_variedad, id_finca,nombre_variedad,descripcion from variedad_cafe`;
+
+        const [resultado] = await pool.query(sql)
+
+        res.status(200).json(resultado)
+    } catch (error) {
+        res.status(500).json({
+            mensaje:"error del servidor",
+            error:error.message
+        })
+    }
+}

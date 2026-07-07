@@ -76,3 +76,18 @@ export const gettrazabilidad = async(req,res) => {
         })
     }
 }
+
+export const gettrazabilidades = async(req,res) => {
+    try {
+        const sql = `select id_trazabilidad,id_finca,id_administrador,codigo_trazabilidad,cordenadas,certificaciones,informacion_eudr,fecha_registro from trazabilidad_eudr`;
+        
+        const [resultado] = await pool.query(sql)
+
+        res.status(200).json(resultado)
+    } catch (error) {
+        res.status(500).json({
+            mensaje:"error del servidor",
+            error: error.message
+        })
+    }
+}

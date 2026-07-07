@@ -89,3 +89,22 @@ export const getfotofincas = async (req,res) => {
         })
     }
 }
+
+export const putfotofincas = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const {id_finca,url_imagen,descripcion} = req.body;
+
+        if(isNaN(id)){
+            return res.status(400).json({
+                mensaje:"el id debe ser numerico"
+            })
+        }
+
+        const sql = `update fotografia_finca set id_finca=?,url_imagen=?,descripcion=?`;
+
+        
+    } catch (error) {
+        
+    }
+}

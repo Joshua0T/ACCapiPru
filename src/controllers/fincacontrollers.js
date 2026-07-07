@@ -110,3 +110,49 @@ export const getfincas = async(req,res) => {
         })
     }
 }
+
+
+export const putfinca = async (req,res) => {
+    try {
+        const {id} = req.params;
+
+        const {id_productor,nombre_finca,departamento,municipio,direccion,altitud,area_total,area_cultivada,descripcion} = req.body;
+
+        if(isNaN(id)){
+            return res.status(400).json({
+                mensaje:"el id debe ser numerico"
+            })
+        }
+
+        const sql = `update finca set id_productor=?,nombre_finca=?,departamento=?,municipio=?,direccion=?,altitud=?,area_total=?,area_cultivada=?,descripcion=?`;
+
+        const [resultado] = await pool.query(sql,[
+            id_productor,
+           
+            nombre_finca,
+            departamento,
+            municipio,
+            direccion,
+            altitud,
+            area_total,
+            area_cultivada,
+            descripcion,
+            id
+        ])
+
+        if(resultado.affectedRows===0){
+            return res.status(404).json({
+                mensaje:"finca no encontrada"
+            })
+        }
+
+        res.status(200).json({
+            mensaje:"finca actualizada"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            mensaje:"error en el sevidor",
+            error: error.message
+        })
+    }
+}

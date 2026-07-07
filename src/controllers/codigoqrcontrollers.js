@@ -94,3 +94,43 @@ export const getcodigosqr = async(req,res) => {
         })
     }
 }
+
+
+
+export const putcodigoqr = async(req,res) => {
+    try {
+        const {id} = req.params;
+        const {id_finca,id_administrador,codigo_qr,url_destino} = req.body;
+
+        if(isNaN(id)){
+            return res.status(400).json({
+                mensaje:"el id deber ser numerico"
+            })
+        }
+
+        const sql = `update codigo_qr set id_finca = ?, id_administrador =?, codigo_qr =?, url_destino =? `;
+
+        const [resultado] = await pool.query(sql,[
+            id_finca,
+            id_administrador,
+            codigo_qr,
+            url_destino,
+            id
+        ])
+
+        if(resultado.affectedRows === 0){
+            return res.status(404).json({
+                mensaje:"codigo no encontrado"
+            })
+        }
+
+        res.status(200).json({
+            mensaje:"codigo qr actualizado"
+        })
+    } catch (error) {
+        res.status(500).json({
+            mensaje: "error del servidor",
+            error:error.message
+        })
+    }
+}

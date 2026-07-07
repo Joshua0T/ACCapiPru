@@ -94,3 +94,42 @@ export const getdocumentos = async (req,res) => {
         })
     }
 }
+
+export const putdocumento = async(req,res) => {
+  try {
+    const {id} = req.params;
+
+    const {id_trazabilidad,id_administrador,nombre_documento,url_documento,tipo_documento} = req.body;
+
+    if(isNaN(id)){
+        return res.status(400).json({
+            mensaje:"el id debe ser numerico"
+        });
+    }
+
+    const sql = `update documento_eudr set id_trazabilidad =?,id_administrador=?,codigo_qr=?,url_destino=?`
+
+    const [resultado] = await pool.query(sql,[
+        id_trazabilidad,
+        id_administrador,
+        nombre_documento,
+        url_documento,
+        tipo_documento,
+        id
+    ])
+    if(resultado.affectedRows === 0){
+        return res.status(404).json({
+            mensaje:"documento no encontrado"
+        })
+    }
+
+    res.status(200).json({
+        mensaje:"documento actualizado"
+    })
+  } catch (error) {
+    res.status(500).json({
+        mensaje:"error del servidor",
+        error:error.message
+    })
+  }
+}
